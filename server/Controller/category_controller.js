@@ -57,7 +57,7 @@ export const create_category = async (req, res) => {
   }
 };
 
-// Get category
+// Get categories
 
 export const get_categories = async (req, res) => {
   try {
@@ -66,5 +66,74 @@ export const get_categories = async (req, res) => {
     return res.json({ data: categories });
   } catch (error) {
     return res.json({ message: "Server error:", error });
+  }
+};
+
+// Get category
+export const get_category = async (req, res) => {
+  try {
+    const category_id = req.params.id;
+    const category = await prisma.category.findUnique({
+      where: {
+        id: Number(category_id),
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Category found", data: category });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error", error: error });
+  }
+};
+
+// Update category
+export const update_category = async (req, res) => {
+  try {
+    const category_id = req.params.id;
+    const { name } = req.body;
+    if (!name) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No category found" });
+    }
+
+    await prisma.category.update({
+      where: {
+        id: Number(category_id),
+      },
+      data: {
+        name: name,
+      },
+    });
+
+    return res
+      .status(201)
+      .json({ success: true, message: `Category updated successfully` });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const delete_category = async (req, res) => {
+  try {
+    const category_id = req.params.id;
+    await prisma.category.delete({
+      where: {
+        id: Number(category_id),
+      },
+    });
+
+    return res.status(200).json({ success: true, message: "Category deleted" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Can't delete! Internal server error" });
   }
 };
