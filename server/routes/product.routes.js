@@ -11,7 +11,7 @@ const router = Router();
 router.get("/", get_products);
 router.get("/:id", get_product)
 router.post("/", create_product);
-router.patch("/:id", update_product)
+router.put("/:id", update_product)
 router.delete("/:id", delete_product)
 
 export default router;
